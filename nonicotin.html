@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown - Rauchfrei bis 31. Dezember 2024</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background-color: #2c3e50; /* Sfondo grigio scuro */
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+            width: 90%; /* Riduce la larghezza sui dispositivi mobili */
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 2.2em; /* Riduci la dimensione del titolo per il mobile */
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            word-break: break-word; /* Assicura che il titolo non trabocchi */
+        }
+
+        #countdown {
+            font-size: 1.8em;
+            margin: 20px 0;
+            color: white;
+        }
+
+        #progressBar {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        #progressBarFill {
+            height: 30px;
+            width: 0%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            border-radius: 10px;
+        }
+
+        #progress {
+            font-size: 1.2em;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #bdc3c7;
+        }
+
+        img {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Media Query per schermi più piccoli come i telefoni */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em; /* Riduce ulteriormente il titolo per schermi piccoli */
+            }
+
+            #countdown {
+                font-size: 1.4em; /* Riduce la dimensione del countdown sui telefoni */
+            }
+
+            #progress {
+                font-size: 1em; /* Riduce il testo del progresso */
+            }
+
+            img {
+                width: 100px; /* Riduce l'immagine sui telefoni */
+            }
+
+            .container {
+                padding: 20px; /* Riduce il padding sui telefoni */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Rauchfrei Challenge 2024</h1>
+        <img src="garant.webp"> <!-- Assicurati che l'immagine si trovi nella stessa cartella -->
+        <img src="puff.webp">
+        <img src="lucky.webp">
+        <p id="countdown"></p>
+
+        <h2>Prozent des vergangenen Zeitraums:</h2>
+        <div id="progressBar">
+            <div id="progressBarFill"></div>
+        </div>
+        <p id="progress"></p>
+
+        <footer>
+            <h2>Looser: -100€  und -1000 Aura</h2>
+            <h2>Bleiben Sie stark und atmen Sie frei bis 2025!</h2>
+        </footer>
+    </div>
+
+    <script>
+        // Enddatum: 31. Dezember 2024
+        const endDate = new Date('December 31, 2024 23:59:59').getTime();
+        
+        // Startdatum (letzter Samstag um 00:00 Uhr)
+        const now = new Date();
+        const daysSinceSaturday = now.getDay(); // 0: Sonntag, 6: Samstag
+        let startDate = new Date(now);
+        startDate.setDate(now.getDate() - ((daysSinceSaturday + 1) % 7)); // Finde den letzten Samstag
+        startDate.setHours(0, 0, 0, 0); // Setze auf 00:00 Uhr
+        
+        // Aktualisierung des Countdowns jede Sekunde
+        const countdownInterval = setInterval(() => {
+            const currentTime = new Date().getTime();
+            
+            // Berechne verbleibende Zeit
+            const timeLeft = endDate - currentTime;
+
+            // Berechne Tage, Stunden, Minuten, Sekunden
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            // Countdown anzeigen
+            document.getElementById('countdown').innerHTML = `${days} Tage ${hours} Stunden ${minutes} Minuten ${seconds} Sekunden`;
+
+            // Berechne den Prozentsatz der vergangenen Zeit
+            const totalTime = endDate - startDate.getTime(); // Gesamte Zeit
+            const elapsedTime = currentTime - startDate.getTime(); // Verstrichene Zeit
+            const percentage = (elapsedTime / totalTime) * 100;
+
+            // Fülle den Fortschrittsbalken und zeige den Prozentsatz an
+            document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            document.getElementById('progress').innerHTML = `${percentage.toFixed(2)}% der Zeit ist vergangen`;
+
+            // Stoppe den Countdown, wenn das Ziel erreicht ist
+            if (timeLeft < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdown').innerHTML = "Die Herausforderung ist beendet!";
+                document.getElementById('progressBarFill').style.width = '100%';
+                document.getElementById('progress').innerHTML = '100% der Zeit ist vergangen';
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>
